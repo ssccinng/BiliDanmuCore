@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiliBiliTest", "BiliBiliTest\BiliBiliTest.csproj", "{286A2AAA-C7B8-430E-AD21-7C184A1A3A54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BiliBiliDanmuCore", "BiliBiliDanmuCore\BiliBiliDanmuCore.csproj", "{CAFA8CF7-602D-43E8-A4F9-30368BD820DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{286A2AAA-C7B8-430E-AD21-7C184A1A3A54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286A2AAA-C7B8-430E-AD21-7C184A1A3A54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286A2AAA-C7B8-430E-AD21-7C184A1A3A54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286A2AAA-C7B8-430E-AD21-7C184A1A3A54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAFA8CF7-602D-43E8-A4F9-30368BD820DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAFA8CF7-602D-43E8-A4F9-30368BD820DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAFA8CF7-602D-43E8-A4F9-30368BD820DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAFA8CF7-602D-43E8-A4F9-30368BD820DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40E91089-EFBA-43A9-8B3C-AB5EDDC792FE}
+	EndGlobalSection
+EndGlobal
