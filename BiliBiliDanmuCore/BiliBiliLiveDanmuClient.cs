@@ -49,31 +49,53 @@ namespace BiliBiliDanmuCore
         static string DANMAKU_SERVER_CONF_URL = "https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo";
 
 
-        private ClientWebSocket _webSocket = new();
+        protected ClientWebSocket _webSocket = new();
         // 房间信息
-        private int _roomId;
-        private int _roomShortId;
-        private int _roomOwnerId;
+        protected int _roomId;
+        protected int _roomShortId;
+        protected int _roomOwnerId;
 
-        private string _roomTitle;
+        protected string _roomTitle;
 
 
-        private int _lastFans = 0;
+        public int _lastFans { get; private set; } = 0;
         public int Popularity { get; private set; } = 0;
 
+        public LinkedList<BiliBiliDanmu> DanmuList = new();
 
-        private HttpClient _httpClient = new();
+        protected HttpClient _httpClient = new();
         CancellationTokenSource cts = new CancellationTokenSource(35000);
 
-        private JsonElement _hostServerList;
-        private string _hostServerToken;
 
-        private Timer _heartTimer;
+
+        protected JsonElement _hostServerList;
+        protected string _hostServerToken;
+
+        protected Timer _heartTimer;
 
         public BiliBiliLiveDanmuClient(int roomId)
         {
             _roomId = roomId;
         }
+
+        protected virtual void AddDanmu(BiliBiliDanmu danmu)
+        {
+            DanmuList.AddLast(danmu);
+            while (DanmuList.Count > 20) DanmuList.RemoveFirst();
+        }
+
+        //public async Task<string> GetNewDanmu()
+        //{
+        //    await Task.Run(async () =>
+        //    {
+        //        while (DanmuList.Count == 0)
+        //        {
+        //            await Task.Delay(10);
+        //        }
+
+        //    });
+            
+        //}
 
         public async Task Start()
         {
@@ -121,8 +143,6 @@ namespace BiliBiliDanmuCore
                         }
                         byte[] msgBytes = rcvBuffer.Skip(rcvBuffer.Offset).Take(rcvResult.Count).ToArray();
                         //Console.WriteLine("转换成功!");
-                        //byte[] msgBytes1 = rcvBuffer.Skip(16).Take(rcvResult.Count - 16).ToArray();
-                        //string rcvMsg = Encoding.UTF8.GetString(msgBytes1);
                         await ReadMessage(msgBytes);
                         //Console.WriteLine("处理成功!");
 
@@ -216,7 +236,7 @@ namespace BiliBiliDanmuCore
                         //MemoryStream input = new MemoryStream(body);
                         MemoryStream input = new MemoryStream(body[2..^2]);
                         MemoryStream output = new MemoryStream();
-                        using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                        using (DeflateStream dstream = new(input, CompressionMode.Decompress))
                         {
                             dstream.CopyTo(output);
                             var gg = output.ToArray();
@@ -238,7 +258,6 @@ namespace BiliBiliDanmuCore
                 }
                 offset += PacketLength;
             }
-
         }
 
         private bool ParseCommand(string command)
@@ -254,19 +273,28 @@ namespace BiliBiliDanmuCore
                     // 进入房间
                     var IWData = cmd.RootElement.GetProperty("data");
                     Console.WriteLine($"{IWData.GetProperty("uname").GetString()} 进入直播间");
-                    break; 
+                    break;
                 case "ROOM_CHANGE":
                     // 进入房间
-                    
+
                     break;
                 case "DANMU_MSG":
                     // 弹幕信息
                     var DMInfo = cmd.RootElement.GetProperty("info");
-                    Console.WriteLine($"---- {DMInfo[2][1]}: {DMInfo[1]} ----");
+                    BiliBiliDanmu danmu = new BiliBiliDanmu
+                    {
+                        Message = DMInfo[1].GetString(),
+                        Username = DMInfo[2][1].GetString(),
+                        UID = DMInfo[2][0].GetInt32()
+                    };
+                    AddDanmu(danmu);
+                    Console.WriteLine($"---- {danmu} ----");
                     break;
                 case "ROOM_REAL_TIME_MESSAGE_UPDATE":
                     var RRTFansData = cmd.RootElement.GetProperty("data");
-                    Console.WriteLine($"直播间粉丝变化: {RRTFansData.GetProperty("fans").GetInt32()} 人!");
+                    _lastFans = RRTFansData.GetProperty("fans").GetInt32();
+                    Console.WriteLine($"直播间粉丝变化: {_lastFans}人!");
+                    
                     // 粉丝变化
                     break;
 
@@ -282,7 +310,7 @@ namespace BiliBiliDanmuCore
                     var ComboGiftData = cmd.RootElement.GetProperty("data");
                     Console.ForegroundColor = ConsoleColor.Red;
                     //Console.WriteLine("连击礼物");
-                    Console.WriteLine($"{ComboGiftData.GetProperty("uname")} {ComboGiftData.GetProperty("action")} {ComboGiftData.GetProperty("gift_name")} 共{ComboGiftData.GetProperty("total_num").GetInt32()}个");
+                    Console.WriteLine($"{ComboGiftData.GetProperty("uname")} {ComboGiftData.GetProperty("action")} {ComboGiftData.GetProperty("gift_name")} 共{ComboGiftData.GetProperty("total_num")}个");
                     Console.ForegroundColor = ConsoleColor.Gray;
 
                     break;
@@ -319,7 +347,7 @@ namespace BiliBiliDanmuCore
                     //Console.WriteLine(command);
                     break;
                 case "STOP_LIVE_ROOM_LIST":
-                    //muda
+                //muda
                 case "PK_BATTLE_PRE_NEW":
                 case "PK_BATTLE_PRE":
                 case "PK_BATTLE_START_NEW":
@@ -332,19 +360,27 @@ namespace BiliBiliDanmuCore
                 case "PK_BATTLE_PROCESS_NEW":
                 case "PK_BATTLE_PROCESS":
                 case "PK_BATTLE_SETTLE_USER":
-                    // 什么pk的
-                
+                // 什么pk的
+
                 // 注意信息
                 case "ONLINE_RANK_V2":
                 case "ONLINE_RANK_TOP3":
                 case "ROOM_SKIN_MSG":
-                    // 好像是房间皮肤什么的
+                // 好像是房间皮肤什么的
                 case "HOT_RANK_CHANGED":
+                case "HOT_RANK_SETTLEMENT":
                     // 热度榜变化
                     // muda
                     break;
                 case "ANCHOR_LOT_CHECKSTATUS":
+                    Console.WriteLine("天选时刻检查");
+                    break;
+                case "ANCHOR_LOT_START":
+                    Console.WriteLine("++++++++++++++++天选时刻开始++++++++++++++++");
+                    break;
                 case "ANCHOR_LOT_END":
+                    Console.WriteLine("++++++++++++++++天选时刻结束++++++++++++++++");
+                    break;
                 case "ANCHOR_LOT_AWARD":
                     Console.WriteLine("天选之人");
                     break;
@@ -499,6 +535,8 @@ namespace BiliBiliDanmuCore
 
         private async Task<bool> InitRoomIdAndOwner()
         {
+            //HttpClient _httpClient1 = new HttpClient();
+            //_httpClient1.DefaultRequestHeaders.Referrer = nu
             var res = await _httpClient.GetAsync($"{ROOM_INIT_URL}?room_id={_roomId}");
 
             if (res.StatusCode != System.Net.HttpStatusCode.OK)

@@ -1,0 +1,40 @@
+﻿@page "/"
+@using BiliBiliDanmuCore;
+@using System.Threading;
+@inject HttpClient Http
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+<input @bind-value="roomid" />
+<button @onclick="Conn"></button>
+<button @onclick="zawarudo"></button>
+
+@if (bilic != null)
+{
+    foreach (var a in bilic?.DanmuList)
+    {
+        <p>@a</p>
+    }
+}
+
+@code{
+    string roomid;
+    BiliBiliLiveDanmuClient bilic;
+    Timer timer;
+
+    void Conn()
+    {
+        Http.DefaultRequestHeaders.Remove("Origin");
+        Http.GetAsync("https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom?room_id=1128").Wait();
+        //bilic = new BiliBiliLiveDanmuClient(7317568);
+        //bilic.Start();
+
+        //timer = new Timer(new TimerCallback(_ => StateHasChanged()), null, 1000, 100);
+    }
+    void zawarudo()
+    {
+        int a = 1 + 1;
+    }
+}
