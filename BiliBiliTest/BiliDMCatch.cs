@@ -165,24 +165,24 @@ namespace BiliBiliTest
 
                     Console.WriteLine($"bodylen = {body.Length}");
 
-                    MemoryStream input = new MemoryStream(body);
+                    MemoryStream input = new MemoryStream(body[2..^2]);
                     MemoryStream output = new MemoryStream();
 
-                    using (var inf = new Ionic.Zlib.ZlibStream(input, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.Default, true))
+                    //using (var inf = new Ionic.Zlib.ZlibStream(input, Ionic.Zlib.CompressionMode.Decompress, Ionic.Zlib.CompressionLevel.Default, true))
+                    //{
+                    //    inf.CopyTo(output);
+                    //    var byteArray = new byte[output.Length];
+                    //    var gg = output.ToArray();
+                    //    await ReadMessage(gg);
+                    //}
+                    using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
                     {
-                        inf.CopyTo(output);
-                        var byteArray = new byte[output.Length];
+                        dstream.CopyTo(output);
                         var gg = output.ToArray();
                         await ReadMessage(gg);
+
+                        //output.Read(byteArray, 0, (int)output.Length);
                     }
-                    //using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
-                    //{
-                    //    dstream.CopyTo(output);
-                    //    var gg = output.ToArray();
-                    //    ReadMessage(gg);
-                        
-                    //    //output.Read(byteArray, 0, (int)output.Length);
-                    //}
                     //if (body.Length < 300) return;
                     //MemoryStream input = new MemoryStream(1000);
                     //MemoryStream input = new MemoryStream(body);
