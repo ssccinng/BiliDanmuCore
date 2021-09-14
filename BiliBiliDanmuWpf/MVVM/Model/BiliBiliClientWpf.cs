@@ -16,9 +16,9 @@ namespace BiliBiliDanmuWpf.MVVM.Model
         protected override void AddDanmu(BiliBiliDanmu danmu)
         {
             base.AddDanmu(danmu);
-            soso?.Invoke();
+            soso?.Invoke(danmu);
         }
 
-        public event Action soso;
+        public event Action<BiliBiliDanmu> soso;
     }
 }

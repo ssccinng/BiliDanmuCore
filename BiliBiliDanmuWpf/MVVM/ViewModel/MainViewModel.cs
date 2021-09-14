@@ -14,7 +14,7 @@ namespace BiliBiliDanmuWpf.MVVM.ViewModel
     {
 
         Timer _timer;
-
+        
         private List<BiliBiliDanmuCore.BiliBiliDanmu> _biliBiliDanmus;
         public List<BiliBiliDanmuCore.BiliBiliDanmu> BiliBiliDanmus
         {
@@ -25,19 +25,24 @@ namespace BiliBiliDanmuWpf.MVVM.ViewModel
 
             }
         }
-        BiliBiliClientWpf _client;
+        public BiliBiliClientWpf _client;
         public MainViewModel()
         {
             //_client = new BiliBiliClientWpf(213);
-            _client = new BiliBiliClientWpf(153018);
+            //_client = new BiliBiliClientWpf(697);
+            //_client = new BiliBiliClientWpf(22746343);
+            //_client = new BiliBiliClientWpf(697);
+            _client = new BiliBiliClientWpf(7317568);
+            //_client = new BiliBiliClientWpf(153018);
             _client.Start();
             _client.soso += RefreshDanmu;
 
 
         }
 
-        public void RefreshDanmu()
+        public void RefreshDanmu(BiliBiliDanmu biliBiliDanmu)
         {
+            // 可以直接add（？
             BiliBiliDanmus = _client.DanmuList.ToList();
         }
     }

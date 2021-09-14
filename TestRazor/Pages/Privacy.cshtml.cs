@@ -22,6 +22,9 @@ namespace TestRazor.Pages
         {
             
             BiliBiliLiveDanmuClient.Start();
+
+            Task.Delay(10000).Wait();
+            int a = 1 + 1;
         }
 
 

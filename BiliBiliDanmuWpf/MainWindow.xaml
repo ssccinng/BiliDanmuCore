@@ -5,12 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BiliBiliDanmuWpf" xmlns:viewModel="clr-namespace:BiliBiliDanmuWpf.MVVM.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="760" Width="1300"
+        Background="#272537"
+        >
     <Window.DataContext>
         <viewModel:MainViewModel/>
     </Window.DataContext>
     <Grid>
-        <ListView x:Name="listView" ItemsSource="{Binding BiliBiliDanmus}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="75"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel x:Name="stack" Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+            
+        </StackPanel>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="100,56,0,0" Grid.Row="1" VerticalAlignment="Top" Click="button_Click_1"/>
+        <!--<ListView Grid.Row="1" Grid.Column="1" x:Name="listView" ItemsSource="{Binding BiliBiliDanmus}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="200" Header="发送者" DisplayMemberBinding="{Binding Username}"/>
@@ -18,7 +34,7 @@
                     <GridViewColumn  Width="400" Header="弹幕" DisplayMemberBinding="{Binding Message}"/>
                 </GridView>
             </ListView.View>
-        </ListView>
+        </ListView>-->
 
         <!--<Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="431,186,0,0" VerticalAlignment="Top" Click="button_Click"/>-->
         
