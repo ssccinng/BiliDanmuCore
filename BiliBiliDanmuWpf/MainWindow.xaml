@@ -4,9 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BiliBiliDanmuWpf" xmlns:viewModel="clr-namespace:BiliBiliDanmuWpf.MVVM.ViewModel"
+   
         mc:Ignorable="d"
         Title="MainWindow" Height="760" Width="1300"
-        Background="#272537"
+        Background="#272244"
+        AllowsTransparency="True"
+        WindowStyle="None"
+         MouseDown="Window_MouseDown"
+        
         >
     <Window.DataContext>
         <viewModel:MainViewModel/>
@@ -21,11 +26,69 @@
             <RowDefinition Height="75"></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-
-        <StackPanel x:Name="stack" Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+        
+        <StackPanel x:Name="stack" Margin="100,0,0,0" Grid.Row="1" Grid.Column="1" Orientation="Vertical">
             
         </StackPanel>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="100,56,0,0" Grid.Row="1" VerticalAlignment="Top" Click="button_Click_1"/>
+        <Border Grid.Row="1" CornerRadius="8" Background="Transparent">
+            <StackPanel Margin="0,10,0,0">
+                <RadioButton Content="PLC连接设置"
+                             Height="50"
+                             FontSize="14"
+                             
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding PLCConnectCommand}"
+                             IsChecked="True"
+                             />
+                <RadioButton Content="日志数据查询"
+                             Height="50"
+                             FontSize="14"
+                              Command="{Binding QueryCommand}"
+                             Style="{StaticResource MenuButtonTheme}"
+                             >
+
+                </RadioButton>
+
+                <RadioButton Content="实时信息"
+                             Height="50"
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding RealTimeLogCommand}"
+                             >
+
+                </RadioButton>
+                <RadioButton Content="警报信息修改"
+                             Height="50"
+
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding AlarmTypeEditCommand}"
+                             >
+
+                </RadioButton>
+                <RadioButton Content="权限密码修改"
+                             Height="50"
+
+                             FontSize="14"
+                             Style="{StaticResource MenuButtonTheme}"
+                             Command="{Binding PassWordEditCommand}"
+                             >
+
+                </RadioButton>
+            </StackPanel>
+        </Border>
+        <!--<Border Width="20" Height="20" Background="White" >
+            <Border.Clip>
+                <RectangleGeometry RadiusX="10"
+                                   RadiusY="10"
+                                   Rect="0,0,20,20"
+                                       ></RectangleGeometry>
+            </Border.Clip>
+
+                <Image Source="/Images/xuema.png"></Image>
+
+            
+        </Border>-->
         <!--<ListView Grid.Row="1" Grid.Column="1" x:Name="listView" ItemsSource="{Binding BiliBiliDanmus}">
             <ListView.View>
                 <GridView>

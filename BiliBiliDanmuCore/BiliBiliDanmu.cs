@@ -11,6 +11,7 @@ namespace BiliBiliDanmuCore
     {
         Join,
         Msg,
+        Gift,
     }
 
     public class BiliBiliDanmu
@@ -21,6 +22,8 @@ namespace BiliBiliDanmuCore
 
         public string MedalName { get; set; }
         public int MedalLevel { get; set; }
+        public string GiftName { get; set; }
+        public int GiftNum { get; set; }
         public string MedalUP { get; set; }
         public DanmuType DanmuType { get; set; }
 
@@ -28,6 +31,7 @@ namespace BiliBiliDanmuCore
         {
             DanmuType.Join => $"欢迎 {Username} 进入直播间",
             DanmuType.Msg => $"{Username}: {Message}",
+            DanmuType.Gift => $"感谢 {Username} 赠送的 {GiftName}{GiftNum}个",
             _ => base.ToString()
         };
     }

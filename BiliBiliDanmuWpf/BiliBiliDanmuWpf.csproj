@@ -10,9 +10,4 @@
     <ProjectReference Include="..\BiliBiliDanmuCore\BiliBiliDanmuCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Styles\" />
-    <Folder Include="Images\" />
-  </ItemGroup>
-
 </Project>

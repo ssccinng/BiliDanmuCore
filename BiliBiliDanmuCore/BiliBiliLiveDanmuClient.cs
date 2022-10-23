@@ -127,7 +127,7 @@ namespace BiliBiliDanmuCore
                     await SendAuth();
                     await SendHeartMsg();
                     //Console.WriteLine("认证成功!");
-                    var rcvBytes = new byte[15000];
+                    var rcvBytes = new byte[25000];
                     var rcvBuffer = new ArraySegment<byte>(rcvBytes);
                     while (true)
                     {
@@ -207,7 +207,7 @@ namespace BiliBiliDanmuCore
         private async Task ReadMessage(byte[] data)
         {
             int offset = 0;
-            while (offset < data.Length)
+            while (offset + 17 < data.Length)
             {
 
                 int PacketLength = BitConverter.ToInt32(data[offset..(offset + 4)].Reverse().ToArray());
@@ -288,7 +288,17 @@ namespace BiliBiliDanmuCore
                     break;
                 case "ROOM_CHANGE":
                     // 进入房间
-
+                    var RmCData = cmd.RootElement.GetProperty("data");
+                    string title = RmCData.GetProperty("title").GetString();
+                    _roomTitle = title;
+                    Console.WriteLine($"---- 房间名切换为 {title} ----");
+                    break;
+                case "ROOM_BLOCK_MSG":
+                    // 封禁
+                    //var RmCData = cmd.RootElement.GetProperty("data");
+                    //string title = RmCData.GetProperty("title").GetString();
+                    //_roomTitle = title;
+                    //Console.WriteLine($"---- 房间名切换为 {title} ----");
                     break;
                 case "DANMU_MSG":
                     // 弹幕信息
@@ -299,9 +309,6 @@ namespace BiliBiliDanmuCore
                         Username = DMInfo[2][1].GetString(),
                         UID = DMInfo[2][0].GetInt32(),
                         DanmuType = DanmuType.Msg
-                        //MedalName = DMInfo[3][1].GetString(),
-                        //MedalLevel = DMInfo[3][0].GetInt32(),
-                        //MedalUP = DMInfo[3][2].GetString(),
                     };
                     if (DMInfo[3].GetArrayLength() > 2)
                     {
@@ -326,6 +333,15 @@ namespace BiliBiliDanmuCore
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"{GiftData.GetProperty("uname")} {GiftData.GetProperty("action")} {GiftData.GetProperty("giftName")} {GiftData.GetProperty("num")}个");
                     Console.ForegroundColor = ConsoleColor.Gray;
+                    BiliBiliDanmu Giftdanmu = new BiliBiliDanmu
+                    {
+                        Username = GiftData.GetProperty("uname").GetString(),
+                        UID = GiftData.GetProperty("uid").GetInt32(),
+                        GiftName = GiftData.GetProperty("giftName").GetString(),
+                        GiftNum = GiftData.GetProperty("num").GetInt32(),
+                        DanmuType = DanmuType.Gift
+                    };
+                    AddDanmu(Giftdanmu);
                     break;
                 case "COMBO_SEND":
                     // 礼物连击
@@ -333,12 +349,24 @@ namespace BiliBiliDanmuCore
                     var ComboGiftData = cmd.RootElement.GetProperty("data");
                     Console.ForegroundColor = ConsoleColor.Red;
                     //Console.WriteLine("连击礼物");
+
+                    BiliBiliDanmu Combodanmu = new BiliBiliDanmu
+                    {
+                        Username = ComboGiftData.GetProperty("uname").GetString(),
+                        UID = ComboGiftData.GetProperty("uid").GetInt32(),
+                        GiftName = ComboGiftData.GetProperty("gift_name").GetString(),
+                        GiftNum = ComboGiftData.GetProperty("total_num").GetInt32(),
+                        DanmuType = DanmuType.Gift
+                    };
+                    AddDanmu(Combodanmu);
                     Console.WriteLine($"{ComboGiftData.GetProperty("uname")} {ComboGiftData.GetProperty("action")} {ComboGiftData.GetProperty("gift_name")} 共{ComboGiftData.GetProperty("total_num")}个");
                     Console.ForegroundColor = ConsoleColor.Gray;
 
                     break;
                 case "GUARD_BUY":
-                    Console.WriteLine("有人上舰");
+                    
+                    var GUARDData = cmd.RootElement.GetProperty("data");
+                    Console.WriteLine($"!!!!!!!!!!{GUARDData.GetProperty("username")} 成功购买 {GUARDData.GetProperty("gift_name")}!!!!!!!!!!!");
                     // very dont know
                     break;
                 case "USER_TOAST_MSG":
@@ -383,6 +411,7 @@ namespace BiliBiliDanmuCore
                 case "PK_BATTLE_PROCESS_NEW":
                 case "PK_BATTLE_PROCESS":
                 case "PK_BATTLE_SETTLE_USER":
+                case "PK_BATTLE_SETTLE_V2":
                 // 什么pk的
 
                 // 注意信息
